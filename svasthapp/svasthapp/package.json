@@ -1,0 +1,17 @@
+{
+  "name": "com.megster.bluetooth.chat",
+  "version": "2.1.0",
+  "displayName": "Chat",
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-bluetooth-serial": {}
+    }
+  },
+  "dependencies": {
+    "cordova-android": "~6.3.0",
+    "cordova-plugin-bluetooth-serial": "~0.4.7"
+  }
+}
