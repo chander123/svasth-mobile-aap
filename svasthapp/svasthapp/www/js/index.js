@@ -23,6 +23,7 @@ var msg = 'none';
 var lat;
 var long;
 var currentLocation;
+var dibites;
 'use strict';
 var app = {
     initialize: function() {
@@ -43,9 +44,9 @@ var app = {
 
     },
     onDeviceReady: function() {
-        window.plugins.sim.hasReadPermission(success, error);
-        window.plugins.sim.requestReadPermission(success, error);
-        window.plugins.sim.getSimInfo(successCallback, errorCallback);
+        //window.plugins.sim.hasReadPermission(success, error);
+        //window.plugins.sim.requestReadPermission(success, error);
+        //window.plugins.sim.getSimInfo(successCallback, errorCallback);
         cordova.plugins.locationAccuracy.request(function (success){
             console.log("Successfully requested accuracy: "+success.message);
             }, function (error){
@@ -125,10 +126,28 @@ var app = {
         bluetoothSerial.connect(deviceId, onConnect, app.onError);
     },
     onData: function(data) { // data received from Arduino
-        console.log(data);
+        //console.log(data);
         resultDiv.innerHTML = resultDiv.innerHTML + "Received: " + data + "<br/>";
         resultDiv.scrollTop = resultDiv.scrollHeight;
-        msg = msg +','+ data;
+        var res = data.split('=');
+        if(res[0] == 'sim_no') {
+            mobile_num = res[1];
+        }
+        if(msg == 'none') {
+          msg = '';
+        }
+
+        if(res[0] != 'sim_no') {
+            var dib =1;
+
+            dib = dib + 1;
+
+            if(dib == 81){
+             dibites = data;
+            }
+           msg = msg +','+ data;
+        }
+
         navigator.geolocation.getCurrentPosition(onSuccess, onError);
     },
     sendData: function(event) { // send data to Arduino
@@ -178,7 +197,7 @@ var app = {
             type: 'POST',
             async: false,
             url: 'http://www.miisky.com/svasth_insert.php',
-            data: 'message='+encodeURIComponent(msg)+'&mac_no='+encodeURIComponent(bluetoothDeviceName)+'&diabetes=114&sim_no='+mobile_num+'&location='+encodeURIComponent(currentLocation),
+            data: 'message='+encodeURIComponent(msg)+'&mac_no='+encodeURIComponent(bluetoothDeviceName)+'&diabetes='+dibites+'&sim_no='+mobile_num+'&location='+encodeURIComponent(currentLocation),
             error: function(e) {
               alert('Please try again, if problem persists contact the administrator.');
             },
@@ -193,7 +212,7 @@ var app = {
 
 };
 
-function successCallback(result) {
+/*function successCallback(result) {
     mobile_num = result.deviceId;
 }
 
@@ -207,7 +226,7 @@ function success(result) {
 
 function error(error) {
     console.log(error);
-}
+}*/
 
 function onSuccess(position) {
     lat  = position.coords.latitude;
